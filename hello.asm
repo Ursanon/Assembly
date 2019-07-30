@@ -1,18 +1,19 @@
-;nasm 2.11.08
+;nasm 2.14.02
+;Windows 10 x64
+
+[bits 64]
+
+global main
+extern printf
 
 section .data
-    msg db 'Hello from asm', 0
-    msg_len equ $ - msg
+    message db 'Hello from asm', 0
 
 section .text
-    global _main
-    
-_main:
-    mov edx, msg_len
-    mov ecx, msg
-    mov ebx, 1            ; stdout - file descriptor
-    mov eax, 4            ; sys_write
-    int 0x80              ; call kernel
-    
-    mov eax, 1            ; sys_exit
-    int 0x80              ; call kernel
+
+main:
+    sub rsp, 0x28                        ; Reserve the shadow space
+    mov rcx, message                    ; First argument is address of message
+    call printf                            ; puts(message)
+    add rsp, 0x28                        ; Remove shadow space
+    ret
