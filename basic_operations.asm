@@ -15,12 +15,12 @@ section .data
     incLog: db "incLog: VarA+1: %d", 0xA, 0
     decLog: db "decLog: VarA+1: %d", 0xA, 0xA, 0
     mulLog: db "mulLog: VarA * VarB: %d", 0xA, 0
-    divLog: db "divLog: VarA * VarB: %d", 0xA, 0
+    divLog: db "divLog: VarB / VarA: div: %d mod: %d", 0
 
     varByte db 0xA
 
-    varA: dd 123
-    varB: dd 321
+    varA: dq 123
+    varB: dq 321
 
 section .text
 
@@ -77,6 +77,7 @@ op_adding:
     mov rcx, decLog
     call printf
 
+    ;multiply unsigned
     mov rax, [varA]
     mov rdx, [varB]
     mul rdx
@@ -84,12 +85,24 @@ op_adding:
     mov rcx, mulLog
     call printf
 
+    ;multiply signed
     mov rax, [varA]
     mov rdx, -5
     imul rdx
     mov rdx, rax
     mov rcx, mulLog
     call printf
+
+    ;division 
+    mov edx, 0
+    mov rax, [varB]
+    mov rcx, [varA]
+    idiv rcx
+
+    mov r8, rdx
+    mov rdx, rax
+    mov rcx, divLog
+    call printf 
 
     add rsp, 0x28                       ;remove shadow space
     ret
