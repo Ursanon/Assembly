@@ -7,23 +7,35 @@ global main
 extern printf
 
 section .data
+    varByteLog: db "varByte: %d", 0xA, 0xA, 0
     varALog: db "varA: %d", 0xA, 0
     varBLog: db "varB: %d", 0xA, 0xA, 0
     addLog: db "addLog: %d", 0xA, 0
-    
+    subLog: db "subLog: %d", 0xA, 0
+    incLog: db "incLog: VarA+1: %d", 0xA, 0
+    decLog: db "decLog: VarA+1: %d", 0xA, 0xA, 0
+    mulLog: db "mulLog: VarA * VarB: %d", 0xA, 0
+    divLog: db "divLog: VarA * VarB: %d", 0xA, 0
+
+    varByte db 0xA
+
     varA: dd 123
     varB: dd 321
 
 section .text
 
 main:
-    jmp op_adding
+    jmp op_adding    
     ret
 
 op_adding:
-    ;shadow space for Windows
-    sub rsp, 0x28
+    sub rsp, 0x28                       ;shadow space for Windows
     
+    mov bl, [varByte]                   ;load byte to low bx register
+    movsx rdx, bl                       ;promote to sign extended, prepare to send to printf
+    mov rcx, varByteLog                 ;prepare format to send to printf
+    call printf                         ;call printf
+
     ;log varA
     mov rdx, [varA]
     mov rcx, varALog
@@ -50,6 +62,34 @@ op_adding:
     mov rcx, addLog                     ;move log format
     call printf                         ;call printf
 
-    add rsp, 0x28
-    ;remove shadow space
+    mov rdx, [varA]
+    sub rdx, [varB]
+    mov rcx, subLog
+    call printf
+
+    mov rdx, [varA]
+    inc rdx
+    mov rcx, incLog
+    call printf
+
+    mov rdx, [varA]
+    dec rdx
+    mov rcx, decLog
+    call printf
+
+    mov rax, [varA]
+    mov rdx, [varB]
+    mul rdx
+    mov rdx, rax
+    mov rcx, mulLog
+    call printf
+
+    mov rax, [varA]
+    mov rdx, -5
+    imul rdx
+    mov rdx, rax
+    mov rcx, mulLog
+    call printf
+
+    add rsp, 0x28                       ;remove shadow space
     ret
