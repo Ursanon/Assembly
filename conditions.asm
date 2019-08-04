@@ -14,19 +14,23 @@ section .data
 section .text
 
 main:
-    sub rsp, 0x28                        ;Reserve the shadow space for Windows
-
     mov rbx, 0
 looper:
     inc rbx
 
-    mov rcx, loop_message
-    call printf
+    call print_message
 
     cmp rbx, LOOP_SIZE
 
     jl looper
 
+    ret
+
+print_message:
+    sub rsp, 0x28                        ;Reserve the shadow space for Windows
+
+    mov rcx, loop_message
+    call printf
 
     add rsp, 0x28                        ;Release shadow space
     ret
