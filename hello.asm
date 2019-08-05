@@ -12,6 +12,7 @@ section .data
     format db 'passed float: %f', 0xA, 0
     v1 dd 3.1
 
+section .bss
     vendor_id resd 12                       ;reserve 12 bytes
 
 section .text
